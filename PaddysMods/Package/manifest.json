@@ -4,6 +4,7 @@
   "version_number": "1.0.0",
   "website_url": "https://github.com/",
   "dependencies": [
-    "denikson-BepInExPack_Valheim-5.4.601"
+    "denikson-BepInExPack_Valheim-5.4.601",
+    "paddywan-MMHook-1.0.0"
   ]
 }

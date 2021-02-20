@@ -11,6 +11,7 @@
 *.sln.docstates
 /Libs/*
 /Package/plugins/*
+/MMHook/*
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
