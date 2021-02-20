@@ -16,6 +16,7 @@ namespace PaddysMods
         internal static ConfigEntry<float> CartMassMultiplier;
         internal static ConfigEntry<bool> PublicPlayerPosition;
         internal static ConfigEntry<bool> TrashPickup;
+        internal static ConfigEntry<bool> AutoShout;
 
         static Config()
         {
@@ -25,6 +26,7 @@ namespace PaddysMods
             CartMassMultiplier = genSettings.Bind("QoL", "Cart Mass Multiplier", 0.125f, "The multiplier which scales the mass value of the cart and impacts upon its handling. < 1.00 for less mass, >1.00 for more mass.");
             PublicPlayerPosition = genSettings.Bind("QoL", "Public Player Position", true, "Sets the public map position for the player when joining the game.");
             TrashPickup = genSettings.Bind("QoL", "TrashPickup", true, "Setting to false disables pickups of common trash (boar/deer trophy, amber, greydwarf eye). Might add custom string if high demand.");
+            AutoShout = genSettings.Bind("QoL", "AutoShout", true, "Automatically converts localised chat messages to server-wide shouts.");
         }
     }
 }

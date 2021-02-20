@@ -18,6 +18,17 @@ namespace PaddysMods
             On.InventoryGui.Update += InventoryGui_Update;
             On.Humanoid.Pickup += Humanoid_Pickup;
             On.Minimap.Start += Minimap_Start;
+            if (Config.AutoShout.Value)
+            {
+                On.Chat.InputText += Chat_InputText;
+            }
+        }
+
+        private static void Chat_InputText(On.Chat.orig_InputText orig, Chat self)
+        {
+            var text = self.m_input.text;
+            if (text.StartsWith("\\")) orig(self);
+            self.SendText(Talker.Type.Shout, text);
         }
 
         private static void Minimap_Start(On.Minimap.orig_Start orig, Minimap self)
@@ -68,19 +79,7 @@ namespace PaddysMods
             c.Next.Next.Operand = Config.WorkbenchRadius.Value;
         }
 
-        public static void Chat_InputText(ILContext il)
-        {
-            ILCursor c = new ILCursor(il);
-            c.GotoNext(
-                MoveType.Before,
-                zz => zz.MatchLdarg(0),
-                zz => zz.MatchLdloc(1),
-                zz => zz.MatchLdloc(0),
-                zz => zz.MatchCallOrCallvirt<Chat>("SendText")
-                );
-            c.Emit(OpCodes.Ldc_I4, 2);
-            c.Emit(OpCodes.Stloc, 1);
-        }
+
 
         private static void InventoryGui_Update(On.InventoryGui.orig_Update orig, InventoryGui self)
         {

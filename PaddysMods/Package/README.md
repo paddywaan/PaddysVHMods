@@ -15,9 +15,11 @@ Exposed mass modifier to make the cart more usable; default value provides some 
 Split Stack keyboard input (alpha numbers and numpad, single digit support)
 Automatically enables the public player position
 Disables pickups of common trash (boar/deer trophy, amber, greydwarf eye)
+Automatically converts localised messages to shouts
 
 
 ## Changelog
+* *v1.0.1* - implemented disabling of certain trash pickups, added toggle for public player position, and added auto-shout
 * *v1.0.0* - Released with workbench radius, cart mass modifier, split stack behaviour.
 
 ## Known issues
