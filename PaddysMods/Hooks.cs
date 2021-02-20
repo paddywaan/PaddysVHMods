@@ -1,8 +1,6 @@
 ﻿using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace PaddysMods
 {
@@ -11,15 +9,12 @@ namespace PaddysMods
 
         internal static void Init()
         {
-            //harmony.PatchAll(assembly);
-            //On.CraftingStation.HaveBuildStationInRange += CraftingStation_HaveBuildStationInRange;
-            IL.CraftingStation.HaveBuildStationInRange += CraftingStation_HaveBuildStationInRange;
-            On.CircleProjector.CreateSegments += CircleProjector_CreateSegments;
-            //IL.Chat.InputText += Chat_InputText;
-            //IL.Chat.GetShoutWorldTexts += Chat_GetShoutWorldTexts;
-            //On.Chat.GetShoutWorldTexts += Chat_GetShoutWorldTexts;
+            if (Config.WorkBenchRadiusEnabled.Value)
+            {
+                IL.CraftingStation.HaveBuildStationInRange += CraftingStation_HaveBuildStationInRange;
+                On.CircleProjector.CreateSegments += CircleProjector_CreateSegments;
+            }
             On.Vagon.UpdateMass += Vagon_UpdateMass;
-            //On.InventoryGui.ShowSplitDialog += InventoryGui_ShowSplitDialog;
             On.InventoryGui.Update += InventoryGui_Update;
             On.Humanoid.Pickup += Humanoid_Pickup;
         }
@@ -50,7 +45,7 @@ namespace PaddysMods
             orig(self);
         }
 
-        public static void CraftingStation_HaveBuildStationInRange(MonoMod.Cil.ILContext il)
+        public static void CraftingStation_HaveBuildStationInRange(ILContext il)
         {
             ILCursor c = new ILCursor(il);
             c.GotoNext(
@@ -64,7 +59,7 @@ namespace PaddysMods
             c.Next.Next.Operand = Config.WorkbenchRadius.Value;
         }
 
-        public static void Chat_InputText(MonoMod.Cil.ILContext il)
+        public static void Chat_InputText(ILContext il)
         {
             ILCursor c = new ILCursor(il);
             c.GotoNext(

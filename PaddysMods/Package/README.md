@@ -1,12 +1,21 @@
 
-# testMod for Valheim
+# Paddys Mods
 
-This is a Bepinex mod for Valheim that .
+A collection of quality of life improvements, which attempt to remove some of the tedium from this wonderful game, while attempting to maintain the core gameplay balance and behaviours.
 
 ## Installation (manual)
 
-If you are installing this manually, do the following
+* Download and install MMHook for Valheim
+* Extract the `plugins` directory into `Valheim/BepInEx/`
+* Run the game, then close & modify the auto-generated configuration files located inside of `Valheim/BepInEx/Config/PaddysMods.cfg`
 
-1. Extract the archive into a folder. **Do not extract into the game folder.**
-2. Move the contents of `plugins` folder into `<GameDirectory>\Bepinex\plugins`.
-3. Run the game.
+## Features
+Custom workbench(all) radius.
+Exposed mass modifier to make the cart more usable; default value provides some resemblance of balance alongside desired usability.
+Split Stack keyboard input (alpha numbers and numpad, single digit support)
+
+## Changelog
+* *v1.0.0* - Released with workbench radius, cart mass modifier, split stack behaviour.
+
+## Known issues
+If you happen to come across any problems or unexpected behaviour, please feel free to contact me on discord, or create an issue on github at: https://github.com/paddywaan/PaddysVHMods/issues
