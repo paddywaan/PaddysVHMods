@@ -13,6 +13,9 @@ A collection of quality of life improvements, which attempt to remove some of th
 Custom workbench(all) radius.
 Exposed mass modifier to make the cart more usable; default value provides some resemblance of balance alongside desired usability.
 Split Stack keyboard input (alpha numbers and numpad, single digit support)
+Automatically enables the public player position
+Disables pickups of common trash (boar/deer trophy, amber, greydwarf eye)
+
 
 ## Changelog
 * *v1.0.0* - Released with workbench radius, cart mass modifier, split stack behaviour.

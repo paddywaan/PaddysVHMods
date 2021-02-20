@@ -17,10 +17,19 @@ namespace PaddysMods
             On.Vagon.UpdateMass += Vagon_UpdateMass;
             On.InventoryGui.Update += InventoryGui_Update;
             On.Humanoid.Pickup += Humanoid_Pickup;
+            On.Minimap.Start += Minimap_Start;
+        }
+
+        private static void Minimap_Start(On.Minimap.orig_Start orig, Minimap self)
+        {
+            orig(self);
+            self.m_publicPosition.isOn = Config.PublicPlayerPosition.Value;
+            ZNet.instance.SetPublicReferencePosition(self.m_publicPosition.isOn);
         }
 
         private static bool Humanoid_Pickup(On.Humanoid.orig_Pickup orig, Humanoid self, GameObject go)
         {
+            if (Config.TrashPickup.Value) return orig(self, go);
             //Main.log.Log(BepInEx.Logging.LogLevel.Debug, $"{go.name}");
             ItemDrop component = go.GetComponent<ItemDrop>();
             if (component == null)
@@ -34,7 +43,7 @@ namespace PaddysMods
                 case "GreylingTrophy(Clone)": return false;
                 case "TophyBoar(Clone)": return false;
                 case "TrophyDeer(Clone)": return false;
-                default: Main.log.LogDebug($"Pickup Exclusions: {self.m_name} picked up {go.name}"); break;
+                default: /*Main.log.LogDebug($"Pickup Exclusions: {self.m_name} picked up {go.name}");*/ break;
             }
             return orig(self, go);
         }
