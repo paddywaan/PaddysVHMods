@@ -10,8 +10,9 @@
 *.userosscache
 *.sln.docstates
 /Libs/*
-/Package/plugins/*
+Package/
 /MMHook/*
+PaddysMods.dll
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

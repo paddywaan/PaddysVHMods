@@ -14,7 +14,7 @@ Custom workbench(all) radius.
 Exposed mass modifier to make the cart more usable; default value provides some resemblance of balance alongside desired usability.
 Split Stack keyboard input (alpha numbers and numpad, single digit support)
 Automatically enables the public player position
-Disables pickups of common trash (boar/deer trophy, amber, greydwarf eye)
+Disables pickups of common trash (boar/deer trophy, resin, greydwarf eye)
 Automatically converts localised messages to shouts
 
 

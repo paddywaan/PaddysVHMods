@@ -1,12 +1,14 @@
 ﻿using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using System;
 using UnityEngine;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace PaddysMods
 {
     public static class Hooks
     {
-
         internal static void Init()
         {
             if (Config.WorkBenchRadiusEnabled.Value)
@@ -16,12 +18,35 @@ namespace PaddysMods
             }
             On.Vagon.UpdateMass += Vagon_UpdateMass;
             On.InventoryGui.Update += InventoryGui_Update;
-            On.Humanoid.Pickup += Humanoid_Pickup;
             On.Minimap.Start += Minimap_Start;
-            if (Config.AutoShout.Value)
-            {
-                On.Chat.InputText += Chat_InputText;
-            }
+            if (Config.AutoShout.Value) On.Chat.InputText += Chat_InputText;
+            if(Config.TrashFilter.Value) IL.Player.AutoPickup += Player_AutoPickup;
+            //On.Minimap.Awake += Minimap_Awake;
+            //On.Minimap.OnMapDblClick += Minimap_OnMapDblClick;
+        }
+
+        private static void Player_AutoPickup(ILContext il)
+        {
+            ILCursor c = new ILCursor(il);
+            int num;
+            ILLabel cElse = null;
+            c.GotoNext(MoveType.After,
+                    zz => zz.MatchLdloc(out num),
+                    zz => zz.MatchLdarg(0),
+                    zz => zz.MatchLdfld<Player>("m_autoPickupRange"),
+                    zz => zz.MatchBgt(out cElse)
+                    );
+            c.Emit(OpCodes.Ldarg_0);
+            c.Emit(OpCodes.Ldloc_S, (byte)4);
+            c.EmitDelegate<Func<Player, ItemDrop, bool>>((player, item) => PlayerPickup(player, item));
+            c.Emit(OpCodes.Brtrue, cElse.Target);
+        }
+
+        private static bool PlayerPickup(Player player, ItemDrop item)
+        {
+            if (Config.FilterList.Any(zz => item.name.Equals(zz))) return true;
+            Main.log.LogDebug($"{player.m_name} {player.GetPlayerName()} picked up {item.name}");
+            return false;
         }
 
         private static void Chat_InputText(On.Chat.orig_InputText orig, Chat self)
@@ -40,21 +65,22 @@ namespace PaddysMods
 
         private static bool Humanoid_Pickup(On.Humanoid.orig_Pickup orig, Humanoid self, GameObject go)
         {
-            if (Config.TrashPickup.Value) return orig(self, go);
+            if (Config.TrashFilter.Value) return orig(self, go);
             //Main.log.Log(BepInEx.Logging.LogLevel.Debug, $"{go.name}");
             ItemDrop component = go.GetComponent<ItemDrop>();
             if (component == null)
             {
                 return false;
             }
-            switch(go.name)
+            switch (go.name)
             {
                 case "GreydwarfEye(Clone)": return false;
                 case "Resin(Clone)": return false;
                 case "GreylingTrophy(Clone)": return false;
                 case "TophyBoar(Clone)": return false;
                 case "TrophyDeer(Clone)": return false;
-                default: /*Main.log.LogDebug($"Pickup Exclusions: {self.m_name} picked up {go.name}");*/ break;
+                default: /*Main.log.LogDebug($"Pickup Exclusions: {self.m_name} picked up {go.name}");*/
+                    break;
             }
             return orig(self, go);
         }
