@@ -1,10 +1,10 @@
 {
   "name": "PaddysMods",
   "description": "This is a package of multiple quality of life improvements, which intend to negate tedium without drastically affecting balance, maintaining playability and original intentions.",
-  "version_number": "1.0.1",
+  "version_number": "1.0.2",
   "website_url": "https://github.com/paddywaan/PaddysVHMods/",
   "dependencies": [
     "denikson-BepInExPack_Valheim-5.4.601",
-    "paddywan-MMHook-1.0.0"
+    "ValheimModding-HookGenPatcher-0.0.1"
   ]
 }
