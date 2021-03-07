@@ -5,11 +5,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6620ECA5-CFE1-444D-B43D-D976A9F5528C}</ProjectGuid>
+    <ProjectGuid>{AB6C307C-1B08-41AF-BFE4-C323A526FF6A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PaddysMods</RootNamespace>
-    <AssemblyName>PaddysMods</AssemblyName>
+    <RootNamespace>ValheimPersonalisedTemplate</RootNamespace>
+    <AssemblyName>ValheimPersonalisedTemplate</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

@@ -14,15 +14,13 @@ Custom workbench(all) radius.
 Exposed mass modifier to make the cart more usable; default value provides some resemblance of balance alongside desired usability.
 Split Stack keyboard input (alpha numbers and numpad, single digit support)
 Automatically enables the public player position
-Disables pickups of common trash via a customisable FilterList
+Disables pickups of common trash (boar/deer trophy, resin, greydwarf eye)
 Automatically converts localised messages to shouts
 
 
 ## Changelog
-* *v1.0.2* - Moved PickupFilter to a better hook location, resolves dragging of litter under feet. Implemented custom filter list inside of config. Moved dependency to HookGen instead of MMHook.
 * *v1.0.1* - implemented disabling of certain trash pickups, added toggle for public player position, and added auto-shout
 * *v1.0.0* - Released with workbench radius, cart mass modifier, split stack behaviour.
 
 ## Known issues
-
-If you happen to come across any problems or unexpected behaviour, please feel free to contact me on discord, or create an issue on GitHub at: https://github.com/paddywaan/PaddysVHMods/issues
+If you happen to come across any problems or unexpected behaviour, please feel free to contact me on discord, or create an issue on github at: https://github.com/paddywaan/PaddysVHMods/issues

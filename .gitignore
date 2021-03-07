@@ -344,3 +344,8 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 /PaddysMods/Package/Package.zip
+/PaddysMods/Package/plugins/PaddysMods/assembly_googleanalytics_publicized.dll
+/PaddysMods/Package/plugins/PaddysMods/assembly_guiutils_publicized.dll
+/PaddysMods/Package/plugins/PaddysMods/assembly_lux_publicized.dll
+/PaddysMods/Package/plugins/PaddysMods/assembly_postprocessing_publicized.dll
+/PublishOutput
