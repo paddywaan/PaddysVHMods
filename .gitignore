@@ -349,3 +349,4 @@ healthchecksdb
 /PaddysMods/Package/plugins/PaddysMods/assembly_lux_publicized.dll
 /PaddysMods/Package/plugins/PaddysMods/assembly_postprocessing_publicized.dll
 /PublishOutput
+*.dll

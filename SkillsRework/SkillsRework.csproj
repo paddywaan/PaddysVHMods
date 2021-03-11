@@ -73,7 +73,6 @@
     </Reference>
     <Reference Include="MMHOOK_assembly_valheim">
       <HintPath>D:\Program Files (x86)\Steam\steamapps\common\Valheim\BepInEx\plugins\MMHOOK\MMHOOK_assembly_valheim.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>D:\Program Files (x86)\Steam\steamapps\common\Valheim\BepInEx\core\Mono.Cecil.dll</HintPath>
@@ -362,6 +361,8 @@
     <Compile Include="Config.cs" />
     <Compile Include="Hooks.cs" />
     <Compile Include="Main.cs" />
+    <Compile Include="ModAssets.cs" />
+    <Compile Include="NotificationHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -383,6 +384,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

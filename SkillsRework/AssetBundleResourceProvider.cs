@@ -60,8 +60,8 @@ namespace SkillsRework
         public ResourceRequest LoadAsync(string path, Type type)
         {
             var req = new ResourceRequest();
-            var bundleReq = _bundle.LoadAssetAsync(ToBundlePath(path), type);
-            /*bundleReq.completed += op => {
+            /*var bundleReq = _bundle.LoadAssetAsync(ToBundlePath(path), type);
+          bundleReq.completed += op => {
                 req.set
                 req.SetField("asset", bundleReq.asset);
                 req.SetFieldValue("isDone", bundleReq.isDone);
