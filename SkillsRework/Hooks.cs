@@ -26,18 +26,6 @@ namespace SkillsRework
             orig(self);
         }
 
-        private static void Game_Start(On.Game.orig_Start orig, Game self)
-        {
-            orig(self);
-            var go = GameObject.Instantiate(ModAssets.Instance.SkillUp, self.gameObject.transform);
-
-            var notify = go.AddComponent<SkillNotify>();
-            notify.transform.SetParent(self.transform);
-            go.transform.SetParent(self.transform);
-            go.SetActive(true);
-            Main.log.LogDebug($"{self.gameObject.transform}");
-        }
-
         //private static void Menu_Start(On.Menu.orig_Start orig, Menu self)
         //{
         //    orig(self);

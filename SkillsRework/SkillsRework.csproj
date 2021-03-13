@@ -369,7 +369,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SkillNotify.cs" />
+    <Compile Include="Notification.cs" />
     <Content Include="Package\icon.png" />
     <None Include="GameDir.targets" />
     <None Include="Package\manifest.json" />

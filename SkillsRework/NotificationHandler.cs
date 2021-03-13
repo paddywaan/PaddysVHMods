@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,11 +14,14 @@ namespace SkillsRework
     {
         private static NotificationHandler instance;
         private GameObject NotificationLayer;
+        public List<GameObject> notifications;
+        private Queue<GameObject> incomingNotificationQueue;
+        private GameObject currentNotification;
 
         NotificationHandler()
         {
-            NotificationLayer = GameObject.Instantiate(ModAssets.Instance.NotificationLayer, this.transform);
-            NotificationLayer.SetActive(true);
+            if (notifications == null) notifications = new List<GameObject>();
+            if (incomingNotificationQueue == null) incomingNotificationQueue = new Queue<GameObject>();
         }
 
         public static NotificationHandler Instance
@@ -28,44 +32,115 @@ namespace SkillsRework
                 return instance;
             }
         }
-        public static List<GameObject> notificationQueue;
+        
 
         public void Start()
         {
+            NotificationLayer = GameObject.Instantiate(ModAssets.Instance.NotificationLayer, this.transform);
+            NotificationLayer.SetActive(true);
             //this
-            if (notificationQueue == null) notificationQueue = new List<GameObject>();
-            AddNotification("test1111", 5f);
-            Thread.Sleep(150);
-            AddNotification("test2222", 5f);
-            Thread.Sleep(150);
-            AddNotification("test3333", 5f);
-            Thread.Sleep(150);
-            //AddNotification("test4444", 3f);
-            //.Sleep(150);
 
+
+            //this.StartCoroutine("ProcessQueue");
+            //AddNotification("test1111", 5f);
+            //AddNotification("test2222", 5f);
+            //AddNotification("test333", 5f);
+            this.StartCoroutine("ProcessQueue");
         }
+
         public void AddNotification(string text, float duration)
         {
-            //var go = ModAssets.SkillUp.clo
-            var go = GameObject.Instantiate(ModAssets.Instance.SkillUp, NotificationLayer.transform);
+            var newNotification = GameObject.Instantiate(ModAssets.Instance.SkillUp, NotificationLayer.transform);
+            var notifyComponent = newNotification.AddComponent<Notification>();
             
-            var notify = go.AddComponent<SkillNotify>();
-            //go.AddComponent<Text>();
+            newNotification.GetComponentInChildren<Text>().text = text;
+            notifyComponent.Duration = duration;
+            newNotification.SetActive(false);
+            incomingNotificationQueue.Enqueue(newNotification);
 
-            notify.Duration = duration;
-            //notify.startPos = NotificationLayer.transform.localPosition;
-            notify.startPos= new Vector3(this.transform.localPosition.x, this.transform.localPosition.y + (notificationQueue.Count * 30)-30, this.transform.localPosition.z);
-            go.GetComponent<RectTransform>().localPosition = notify.startPos;
-            //notify.text.text = text;
-
-            var notifText = go.GetComponentInChildren<Text>();
-            //notifText.name = "TestNotif";
-            notifText.text = text;
-            notify.Duration = duration;
-            notificationQueue.Add(go);
-            //go.SetActive(true);
-
+            //notifications.Add(newNotification);
+            //foreach (var n in notifications)
+            //{
+            //    if(n.GetComponent<Notification>().MoveUp());
+            //}
         }
+
+
+        public void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Keypad8)) AddNotification("TestNotification", 5f);
+        }
+
+        public IEnumerator ProcessQueue()
+        {
+            while (true)
+            {
+                if (incomingNotificationQueue.Count > 1)
+                {
+                    //Main.log.LogDebug($"Moving?: {currentNotification?.GetComponent<Notification>().isMoving()}");
+                    if (!currentNotification) currentNotification = incomingNotificationQueue.Peek();
+                    Main.log.LogDebug($"Moving?: {currentNotification.GetComponent<Notification>().isMoving()}");
+                    if (!currentNotification.GetComponent<Notification>().isMoving())
+                    {
+                        
+                        var incNot = incomingNotificationQueue.Dequeue();
+                        incNot.SetActive(true);
+                        incNot.gameObject.transform.localPosition = new Vector3(-280, -30, 0); //Starting pos
+                        notifications.Add(incNot);
+                        foreach (var n in notifications)
+                        {
+                            if (n != null && n.GetComponent<Notification>()) n.GetComponent<Notification>().MoveUp();
+                        }
+                    }
+                    //else yield return new WaitForSeconds(1f);
+                }
+                yield return new WaitForSeconds(0.2f);
+            }
+        }
+
+        //private bool isMoving()
+        //{
+        //    if(currentNotification)
+        //    {
+        //        if(currentNotification.GetComponent<Notification>().)
+        //    }
+        //}
+
+        private bool areMoving()
+        {
+            if (notifications.Count == 0) return false;
+            foreach(var go in notifications)
+            {
+                if (go != null)
+                {
+                    //Main.log.LogDebug($"{go.gameObject.transform.localPosition} vs {go.GetComponent<Notification>().nextPos}");
+                    if (go.gameObject.transform.localPosition.Equals(go.GetComponent<Notification>().nextPos)) return true;
+                }
+            }
+            return false;
+        }
+        //public void AddNotification(string text, float duration)
+        //{
+        //    //var go = ModAssets.SkillUp.clo
+        //    var go = GameObject.Instantiate(ModAssets.Instance.SkillUp, NotificationLayer.transform);
+            
+        //    var notify = go.AddComponent<SkillNotify>();
+        //    //go.AddComponent<Text>();
+
+        //    notify.Duration = duration;
+        //    //notify.startPos = NotificationLayer.transform.localPosition;
+        //    notify.startPos= new Vector3(this.transform.localPosition.x, this.transform.localPosition.y + (notifications.Count * 30)-30, this.transform.localPosition.z);
+        //    go.GetComponent<RectTransform>().localPosition = notify.startPos;
+        //    //notify.text.text = text;
+
+        //    var notifText = go.GetComponentInChildren<Text>();
+        //    //notifText.name = "TestNotif";
+        //    notifText.text = text;
+        //    notify.Duration = duration;
+        //    notifications.Add(go);
+        //    //go.SetActive(true);
+
+        //}
 
 
         //go.transform.SetParent(instance.transform.parent);
