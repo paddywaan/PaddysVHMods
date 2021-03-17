@@ -10,7 +10,7 @@ namespace SkillsRework
 {
     public static class Config
     {
-        private static ConfigFile genSettings;
+        private readonly static ConfigFile genSettings;
 
         static Config()
         {

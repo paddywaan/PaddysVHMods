@@ -8,10 +8,7 @@ namespace SkillsRework
     internal class Notification : MonoBehaviour
     {
         private const float NotificationTime = 5f;
-        private float timeStart;
         private RectTransform rect;
-        //private string text = "";
-        public string text;
         public float Duration;
         private float timeLeft;
         public Vector3 nextPos;
@@ -21,16 +18,14 @@ namespace SkillsRework
 
         public void Start()
         {
-            timeStart = Time.time;
             rect = this.gameObject.GetComponent<RectTransform>();
             borderRect = this.transform.Find("borderOverlay").GetComponent<RectTransform>();
             timeLeft = (timeLeft == 0f) ? NotificationTime : timeLeft;
 
-            Main.log.LogDebug($"{rect}{borderRect}");
-            if (!rect || !borderRect) Main.log.LogDebug($"Failed to load assets for Notification {text}: {rect}{borderRect}");
+            //Main.log.LogDebug($"{rect}{borderRect}");
+            if (!rect || !borderRect) Main.log.LogDebug($"Failed to load assets for Notification: {rect}{borderRect}");
             flag = false;
             this.gameObject.transform.localPosition = new Vector3(-280, -30, 0); //Starting pos
-            timeStart = Time.time;
             //this.gameObject.SetActive(true);
         }
 
@@ -69,20 +64,20 @@ namespace SkillsRework
             //if (rect.localPosition.y % borderRect.rect.height == 0)
             //{
             nextPos = new Vector3(this.gameObject.transform.localPosition.x, this.gameObject.transform.localPosition.y + 30, this.gameObject.transform.localPosition.z);
-            Main.log.LogDebug($"MovedUp from {this.gameObject.transform.localPosition} to {nextPos}");
+            //Main.log.LogDebug($"MovedUp from {this.gameObject.transform.localPosition} to {nextPos}");
             //    return true;
             //}
             //return false;
 
         }
 
-        public bool isOffScreen()
+        public bool IsOffScreen()
         {
             if (rect.localPosition.y <= -borderRect.rect.height || rect.localPosition.y >= 210) return true;
             return false;
         }
 
-        public bool isMoving()
+        public bool IsMoving()
         {
             if (this.timeLeft < 0) return false;
             //Main.log.LogDebug($"comparing {this.gameObject.transform.localPosition} to {nextPos}");
@@ -91,70 +86,6 @@ namespace SkillsRework
                 return false;
             }
             return true;
-        }
-
-        /// <summary>
-        /// Sourced from: https://forum.unity.com/threads/simple-ui-animation-fade-in-fade-out-c.439825/
-        /// </summary>
-        /// <param name="img"></param>
-        /// <param name="fadeAway"></param>
-        /// <returns></returns>
-        IEnumerator FadeImage(Image img, bool fadeAway)
-        {
-            // fade from opaque to transparent
-            if (fadeAway)
-            {
-                // loop over 1 second backwards
-                for (float i = 1; i >= 0; i -= Time.deltaTime)
-                {
-                    // set color with i as alpha
-                    img.color = new Color(1, 1, 1, i);
-                    yield return null;
-                }
-            }
-            // fade from transparent to opaque
-            else
-            {
-                // loop over 1 second
-                for (float i = 0; i <= 1; i += Time.deltaTime)
-                {
-                    // set color with i as alpha
-                    img.color = new Color(1, 1, 1, i);
-                    yield return null;
-                }
-            }
-        }
-
-        /// <summary>
-        /// sourced from: https://forum.unity.com/threads/fading-in-out-gui-text-with-c-solved.380822/
-        /// </summary>
-        /// <param name="t"></param>
-        /// <param name="i"></param>
-        /// <returns></returns>
-        public IEnumerator FadeTextToFullAlpha(float t, Text i)
-        {
-            i.color = new Color(i.color.r, i.color.g, i.color.b, 0);
-            while (i.color.a < 1.0f)
-            {
-                i.color = new Color(i.color.r, i.color.g, i.color.b, i.color.a + (Time.deltaTime / t));
-                yield return null;
-            }
-        }
-
-        /// <summary>
-        /// sourced from: https://forum.unity.com/threads/fading-in-out-gui-text-with-c-solved.380822/
-        /// </summary>
-        /// <param name="t"></param>
-        /// <param name="i"></param>
-        /// <returns></returns>
-        public IEnumerator FadeTextToZeroAlpha(float t, Text i)
-        {
-            i.color = new Color(i.color.r, i.color.g, i.color.b, 1);
-            while (i.color.a > 0.0f)
-            {
-                i.color = new Color(i.color.r, i.color.g, i.color.b, i.color.a - (Time.deltaTime / t));
-                yield return null;
-            }
         }
     }
 }

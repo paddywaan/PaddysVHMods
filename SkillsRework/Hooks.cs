@@ -55,17 +55,19 @@ namespace SkillsRework
             orig(self, collider, hitPoint, water);
             if (!water)
             {
-                HitData hitData = new HitData();
-                hitData.m_hitCollider = collider;
-                hitData.m_damage = self.m_damage;
-                hitData.m_pushForce = self.m_attackForce;
-                hitData.m_backstabBonus = self.m_backstabBonus;
-                hitData.m_point = hitPoint;
-                hitData.m_dir = self.transform.forward;
-                hitData.m_statusEffect = self.m_statusEffect;
-                hitData.m_dodgeable = self.m_dodgeable;
-                hitData.m_blockable = self.m_blockable;
-                hitData.m_skill = self.m_skill;
+                HitData hitData = new HitData
+                {
+                    m_hitCollider = collider,
+                    m_damage = self.m_damage,
+                    m_pushForce = self.m_attackForce,
+                    m_backstabBonus = self.m_backstabBonus,
+                    m_point = hitPoint,
+                    m_dir = self.transform.forward,
+                    m_statusEffect = self.m_statusEffect,
+                    m_dodgeable = self.m_dodgeable,
+                    m_blockable = self.m_blockable,
+                    m_skill = self.m_skill
+                };
                 hitData.SetAttacker(self.m_owner);
 
                 if (self.m_owner != null && self.m_owner.IsPlayer())
@@ -73,10 +75,17 @@ namespace SkillsRework
                     var c = collider.GetComponent<Character>();
                     if (c != null && c.IsMonsterFaction())
                     {
-                        var num = Mathf.Clamp(hitData.GetTotalDamage(), 0, c.GetMaxHealth())/20;
-                        NotificationHandler.Instance.AddNotification($"+XP: {num}", 3f);
-                        Main.log.LogDebug($"{(self.m_owner as Player).m_name} added {num} to bows from {c.m_name}.");
-                        (self.m_owner as Player).RaiseSkill(Skills.SkillType.Bows, num);
+                        var dmg = Mathf.Clamp(hitData.GetTotalDamage(), 1, c.GetMaxHealth()); //range: 5-100+
+                        var num = dmg/20; //0.25-20
+                        if (num < 1) num = 1;
+                        var distance = Vector3.Distance(hitPoint, self.m_owner.transform.localPosition); //0-100+
+                        var multi = 1 + (distance / 100);
+                        num *= multi;
+                        NotificationHandler.Instance.AddNotification($"+XP: {num:0.00}");
+                        NotificationHandler.Instance.AddNotification($"Distance: {distance:0.0}m");
+
+                        Main.log.LogDebug($"{(self.m_owner as Player).GetPlayerName()} hit {c.m_name} at {distance:0.0}m for {dmg}/{c.GetMaxHealth()} using a {multi:0.00} multiplier yeilding {num}XP to bows.");
+                        //(self.m_owner as Player).RaiseSkill(Skills.SkillType.Bows, num);
                     }
                 }
                    

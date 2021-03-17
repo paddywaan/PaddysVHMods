@@ -15,7 +15,7 @@ namespace SkillsRework
         private static NotificationHandler instance;
         internal static GameObject NotificationLayer;
         public List<GameObject> notifications = new List<GameObject>();
-        private Queue<GameObject> incomingNotificationQueue = new Queue<GameObject>();
+        private readonly Queue<GameObject> incomingNotificationQueue = new Queue<GameObject>();
         
         private GameObject currentNotification;
 
@@ -57,7 +57,7 @@ namespace SkillsRework
             StartCoroutine("ProcessQueue");
         }
 
-        public void AddNotification(string text, float duration)
+        public void AddNotification(string text, float duration = 3f)
         {
             var newNotification = GameObject.Instantiate(ModAssets.Instance.SkillUp, NotificationLayer.transform);
             var notifyComponent = newNotification.AddComponent<Notification>();
@@ -80,13 +80,13 @@ namespace SkillsRework
             while (true)
             {
                 //Main.log.LogDebug($"Tick");
-                if (incomingNotificationQueue.Count > 1)
+                if (incomingNotificationQueue.Count > 0)
                 {
                     //Main.log.LogDebug($"QueueCount: {incomingNotificationQueue.Count}");
                     //Main.log.LogDebug($"Moving?: {currentNotification?.GetComponent<Notification>().isMoving()}");
                     if (!currentNotification) currentNotification = incomingNotificationQueue.Peek();
                     //Main.log.LogDebug($"Moving?: {currentNotification.GetComponent<Notification>().isMoving()}");
-                    if (!currentNotification.GetComponent<Notification>().isMoving())
+                    if (!currentNotification.GetComponent<Notification>().IsMoving())
                     {
                         //Main.log.LogDebug($"Not moving.");
                         var incNot = incomingNotificationQueue.Dequeue();
@@ -103,20 +103,6 @@ namespace SkillsRework
                 }
                 yield return new WaitForSeconds(0.2f);
             }
-        }
-
-        private bool areMoving()
-        {
-            if (notifications.Count == 0) return false;
-            foreach(var go in notifications)
-            {
-                if (go != null)
-                {
-                    //Main.log.LogDebug($"{go.gameObject.transform.localPosition} vs {go.GetComponent<Notification>().nextPos}");
-                    if (go.gameObject.transform.localPosition.Equals(go.GetComponent<Notification>().nextPos)) return true;
-                }
-            }
-            return false;
         }
     }
 }
