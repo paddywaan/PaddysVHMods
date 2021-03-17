@@ -13,15 +13,14 @@ namespace SkillsRework
     internal class NotificationHandler : MonoBehaviour
     {
         private static NotificationHandler instance;
-        private GameObject NotificationLayer;
-        public List<GameObject> notifications;
-        private Queue<GameObject> incomingNotificationQueue;
+        internal static GameObject NotificationLayer;
+        public List<GameObject> notifications = new List<GameObject>();
+        private Queue<GameObject> incomingNotificationQueue = new Queue<GameObject>();
+        
         private GameObject currentNotification;
 
-        NotificationHandler()
+        static NotificationHandler()
         {
-            if (notifications == null) notifications = new List<GameObject>();
-            if (incomingNotificationQueue == null) incomingNotificationQueue = new Queue<GameObject>();
         }
 
         public static NotificationHandler Instance
@@ -33,9 +32,19 @@ namespace SkillsRework
             }
         }
         
+        public void Remove(GameObject go)
+        {
+            notifications.Remove(go);
+        }
+
+        public void Awake()
+        {
+            instance = this;
+        }
 
         public void Start()
         {
+            Main.log.LogDebug($"Start called on NotificationHandler.");
             NotificationLayer = GameObject.Instantiate(ModAssets.Instance.NotificationLayer, this.transform);
             NotificationLayer.SetActive(true);
             //this
@@ -45,48 +54,46 @@ namespace SkillsRework
             //AddNotification("test1111", 5f);
             //AddNotification("test2222", 5f);
             //AddNotification("test333", 5f);
-            this.StartCoroutine("ProcessQueue");
+            StartCoroutine("ProcessQueue");
         }
 
         public void AddNotification(string text, float duration)
         {
             var newNotification = GameObject.Instantiate(ModAssets.Instance.SkillUp, NotificationLayer.transform);
             var notifyComponent = newNotification.AddComponent<Notification>();
-            
+
             newNotification.GetComponentInChildren<Text>().text = text;
             notifyComponent.Duration = duration;
             newNotification.SetActive(false);
             incomingNotificationQueue.Enqueue(newNotification);
-
-            //notifications.Add(newNotification);
-            //foreach (var n in notifications)
-            //{
-            //    if(n.GetComponent<Notification>().MoveUp());
-            //}
+            Main.log.LogDebug($"Queued message \"{text}\" for processing.");
         }
 
 
         public void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Keypad8)) AddNotification("TestNotification", 5f);
+            if (Input.GetKeyDown(KeyCode.Keypad8)) NotificationHandler.Instance.AddNotification("TestNotification", 5f);
         }
 
         public IEnumerator ProcessQueue()
         {
             while (true)
             {
+                //Main.log.LogDebug($"Tick");
                 if (incomingNotificationQueue.Count > 1)
                 {
+                    //Main.log.LogDebug($"QueueCount: {incomingNotificationQueue.Count}");
                     //Main.log.LogDebug($"Moving?: {currentNotification?.GetComponent<Notification>().isMoving()}");
                     if (!currentNotification) currentNotification = incomingNotificationQueue.Peek();
-                    Main.log.LogDebug($"Moving?: {currentNotification.GetComponent<Notification>().isMoving()}");
+                    //Main.log.LogDebug($"Moving?: {currentNotification.GetComponent<Notification>().isMoving()}");
                     if (!currentNotification.GetComponent<Notification>().isMoving())
                     {
-                        
+                        //Main.log.LogDebug($"Not moving.");
                         var incNot = incomingNotificationQueue.Dequeue();
                         incNot.SetActive(true);
                         incNot.gameObject.transform.localPosition = new Vector3(-280, -30, 0); //Starting pos
                         notifications.Add(incNot);
+                        //Main.log.LogDebug($"Move all up.");
                         foreach (var n in notifications)
                         {
                             if (n != null && n.GetComponent<Notification>()) n.GetComponent<Notification>().MoveUp();
@@ -97,14 +104,6 @@ namespace SkillsRework
                 yield return new WaitForSeconds(0.2f);
             }
         }
-
-        //private bool isMoving()
-        //{
-        //    if(currentNotification)
-        //    {
-        //        if(currentNotification.GetComponent<Notification>().)
-        //    }
-        //}
 
         private bool areMoving()
         {
@@ -119,41 +118,5 @@ namespace SkillsRework
             }
             return false;
         }
-        //public void AddNotification(string text, float duration)
-        //{
-        //    //var go = ModAssets.SkillUp.clo
-        //    var go = GameObject.Instantiate(ModAssets.Instance.SkillUp, NotificationLayer.transform);
-            
-        //    var notify = go.AddComponent<SkillNotify>();
-        //    //go.AddComponent<Text>();
-
-        //    notify.Duration = duration;
-        //    //notify.startPos = NotificationLayer.transform.localPosition;
-        //    notify.startPos= new Vector3(this.transform.localPosition.x, this.transform.localPosition.y + (notifications.Count * 30)-30, this.transform.localPosition.z);
-        //    go.GetComponent<RectTransform>().localPosition = notify.startPos;
-        //    //notify.text.text = text;
-
-        //    var notifText = go.GetComponentInChildren<Text>();
-        //    //notifText.name = "TestNotif";
-        //    notifText.text = text;
-        //    notify.Duration = duration;
-        //    notifications.Add(go);
-        //    //go.SetActive(true);
-
-        //}
-
-
-        //go.transform.SetParent(instance.transform.parent);
-
-        //notify.text.text = text;
-        /*
-        go.GetComponent<RectTransform>().anchorMin = new Vector2(1, 0);
-        go.GetComponent<RectTransform>().anchorMax = new Vector2(1, 0);
-        go.GetComponent<RectTransform>().offsetMin = new Vector2(0, 0);
-        go.GetComponent<RectTransform>().offsetMax = new Vector2(0, 0);
-        */
-        //go.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
-        //go.GetComponent<RectTransform>().
-        ///go.transform.localPosition = new Vector3(0, 0, 0);
     }
 }

@@ -73,9 +73,9 @@ namespace SkillsRework
                     var c = collider.GetComponent<Character>();
                     if (c != null && c.IsMonsterFaction())
                     {
-                        var num = Mathf.Clamp(hitData.GetTotalDamage(), 0, c.GetMaxHealth())/10;
+                        var num = Mathf.Clamp(hitData.GetTotalDamage(), 0, c.GetMaxHealth())/20;
+                        NotificationHandler.Instance.AddNotification($"+XP: {num}", 3f);
                         Main.log.LogDebug($"{(self.m_owner as Player).m_name} added {num} to bows from {c.m_name}.");
-                        if (hitData.m_backstabBonus >= 1f) num *= hitData.m_backstabBonus;
                         (self.m_owner as Player).RaiseSkill(Skills.SkillType.Bows, num);
                     }
                 }

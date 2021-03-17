@@ -80,7 +80,6 @@ namespace PaddysMods
             Main.log.LogDebug($"New player connected with Steam64ID: {self.GetPeerID()}");
         }
 
-
         private static void Player_AutoPickup(ILContext il)
         {
             ILCursor c = new ILCursor(il);
@@ -178,7 +177,7 @@ namespace PaddysMods
             }
         }
 
-        public static void Chat_GetShoutWorldTexts(On.Chat.orig_GetShoutWorldTexts orig, Chat self, System.Collections.Generic.List<Chat.WorldTextInstance> texts)
+        public static void Chat_GetShoutWorldTexts(On.Chat.orig_GetShoutWorldTexts orig, Chat self, List<Chat.WorldTextInstance> texts)
         {
             foreach (Chat.WorldTextInstance worldTextInstance in self.m_worldTexts)
             {

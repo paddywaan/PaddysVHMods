@@ -46,11 +46,17 @@ namespace SkillsRework
                 if (timeLeft > 0 && flag) timeLeft -= Time.deltaTime;
                 if (timeLeft < 0)
                 {
+                    var cg = this.gameObject.GetComponent<CanvasGroup>();
                     //this.gameObject.GetComponent<Renderer>().
-                    if (!isOffScreen()) this.gameObject.transform.localPosition = new Vector3(goPos.x, goPos.y + 2, goPos.z);
-                    else
+                    //if (!isOffScreen())
+                    //{
+                    this.gameObject.transform.localPosition = new Vector3(goPos.x, goPos.y + 2, goPos.z);
+                        
+                    if (cg) cg.alpha -= 0.01f;
+                    //}
+                    if (cg.alpha <= 0)
                     {
-                        NotificationHandler.Instance.notifications.Remove(rect.gameObject);
+                        NotificationHandler.Instance.Remove(rect.gameObject);
                         Destroy(this.gameObject);
                     }
                 }
@@ -72,7 +78,7 @@ namespace SkillsRework
 
         public bool isOffScreen()
         {
-            if (rect.localPosition.y <= -borderRect.rect.height || rect.localPosition.y >= Screen.height) return true;
+            if (rect.localPosition.y <= -borderRect.rect.height || rect.localPosition.y >= 210) return true;
             return false;
         }
 
