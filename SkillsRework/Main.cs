@@ -39,9 +39,9 @@ namespace SkillsRework
             Hooks.Init();
         }
 
-        public static void Update()
+        public void Update()
         {
-
+            //Main.log.LogDebug($"Primary:{States.PrimaryAttack}, Secondary: {States.SecondaryAttack}");
         }
 
     }
