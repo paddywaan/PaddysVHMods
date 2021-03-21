@@ -15,13 +15,14 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>none</DebugType>
+    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>Package\plugins\$(AssemblyName)\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>none</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>Package\plugins\PaddysMods\</OutputPath>
@@ -73,6 +74,7 @@
     </Reference>
     <Reference Include="MMHOOK_assembly_valheim">
       <HintPath>D:\Program Files (x86)\Steam\steamapps\common\Valheim\BepInEx\plugins\MMHOOK\MMHOOK_assembly_valheim.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>D:\Program Files (x86)\Steam\steamapps\common\Valheim\BepInEx\core\Mono.Cecil.dll</HintPath>
@@ -370,15 +372,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Notification.cs" />
-    <Content Include="Package\icon.png" />
     <None Include="GameDir.targets" />
-    <None Include="Package\manifest.json" />
-    <None Include="Package\README.md" />
     <None Include="README.md" />
     <None Include="Resources\skillup" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Package\plugins\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -389,12 +385,16 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(TargetDir)" "$(GameDir)\Bepinex\plugins\$(ProjectName)\" /q /s /y /i
-xcopy "$(ProjectDir)README.md" "$(ProjectDir)Package\" /q /y /i
-
-if $(ConfigurationName) == Release (
-powershell Compress-Archive -Path '$(ProjectDir)Package\*' -DestinationPath '$(SolutionDir)PublishOutput\$(ProjectName).zip' -Force)</PostBuildEvent>
+    <PostBuildEvent>
+      if $(ConfigurationName) == Release (
+      powershell Compress-Archive -Path '$(ProjectDir)Package\*' -DestinationPath '$(SolutionDir)PublishOutput\$(ProjectName).zip' -Force)
+      if $(ConfigurationName) == Debug del "$(TargetPath).mdb"
+      if $(ConfigurationName) == Debug $(SolutionDir)pdb2mdb.exe "$(TargetPath)"
+      xcopy "$(TargetDir)" "$(GameDir)\Bepinex\plugins\$(ProjectName)\" /q /s /y /i
+      xcopy "$(ProjectDir)README.md" "$(ProjectDir)Package\" /q /y /i
+    </PostBuildEvent>
   </PropertyGroup>
+
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>

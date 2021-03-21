@@ -12,6 +12,8 @@ namespace SkillsRework
     {
         public static bool PrimaryAttack = false;
         public static bool SecondaryAttack = false;
+        public static int ChainCount = 0;
+        public static bool HitDuringAttack = false;
     }
     public static class Hooks
     {
@@ -23,11 +25,25 @@ namespace SkillsRework
             On.Character.RPC_Damage += Character_RPC_Damage;
             On.Attack.DoMeleeAttack += Attack_DoMeleeAttack;
             On.Humanoid.StartAttack += Humanoid_StartAttack;
+            On.Attack.Start += Attack_Start;
+            On.FejdStartup.Start += FejdStartup_Start;
+        }
+
+        private static void FejdStartup_Start(On.FejdStartup.orig_Start orig, FejdStartup self)
+        {
+            orig(self);
+        }
+
+        private static bool Attack_Start(On.Attack.orig_Start orig, Attack self, Humanoid character, Rigidbody body, ZSyncAnimation zanim, CharacterAnimEvent animEvent, VisEquipment visEquipment, ItemDrop.ItemData weapon, Attack previousAttack, float timeSinceLastAttack, float attackDrawPercentage)
+        {
+            var ret = orig(self, character, body, zanim, animEvent, visEquipment, weapon, previousAttack, timeSinceLastAttack, attackDrawPercentage);
+            if (IsLocalPlayer(self.m_character)) States.ChainCount = self.m_currentAttackCainLevel;
+            return ret;
         }
 
         private static bool Humanoid_StartAttack(On.Humanoid.orig_StartAttack orig, Humanoid self, Character target, bool secondaryAttack)
         {
-            if (self.IsPlayer())
+            if (IsLocalPlayer(self))
             {
                 States.PrimaryAttack = !secondaryAttack;
                 States.SecondaryAttack = secondaryAttack;
@@ -38,8 +54,9 @@ namespace SkillsRework
         private static void Attack_DoMeleeAttack(On.Attack.orig_DoMeleeAttack orig, Attack self)
         {
             orig(self);
-            if (self.m_character.IsPlayer())
+            if (IsLocalPlayer(self.m_character))
             {
+                
                 States.PrimaryAttack = false;
                 States.SecondaryAttack = false;
                 //Main.log.LogDebug($"Returning states to false.");
@@ -48,11 +65,14 @@ namespace SkillsRework
 
         private static void Character_RPC_Damage(On.Character.orig_RPC_Damage orig, Character self, long sender, HitData hit)
         {
+            if (IsLocalPlayer(self) && self.InAttack()) States.HitDuringAttack = true;
+
+
+
 
             bool alerted = false;
             if(self.m_baseAI) alerted = self.m_baseAI.m_alerted;
-            var time = Time.time;
-            var backStabTime = self.m_backstabTime;
+            var isBackstab = hit.m_backstabBonus > 1f && Time.time - self.m_backstabTime > 300f;
             orig(self, sender, hit);
             var attacker = hit.GetAttacker();
             float XP = 0;
@@ -63,7 +83,7 @@ namespace SkillsRework
                 {
                     case Skills.SkillType.Knives:
                         //Main.log.LogDebug($"{self.m_baseAI},{!alerted}{hit.m_backstabBonus > 1f}{time - backStabTime > 300f}, Evaluates to: {(self.m_baseAI != null && !alerted && hit.m_backstabBonus > 1f && Time.time - self.m_backstabTime > 300f)}");
-                        if (self.m_baseAI != null && !alerted && hit.m_backstabBonus > 1f && time - backStabTime > 300f)
+                        if (self.m_baseAI != null && !alerted && isBackstab)
                         {
                             XP = DamageToXP(self, hit);
                             if (self.IsDead()) XP *= 2;
@@ -200,6 +220,12 @@ namespace SkillsRework
             if (num < 1) num = 1;
             Main.log.LogDebug($"override: {damageOverride} vs dmg: {hit.GetTotalDamage()}, MaxHP: {victim.GetMaxHealth()}, post-Clamp: {dmg}");
             return num;
+        }
+
+        public static bool IsLocalPlayer(Character self)
+        {
+            if (self.IsPlayer() && self.m_nview.IsOwner()) return true;
+            return false;
         }
     }
 }

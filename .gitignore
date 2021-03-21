@@ -10,10 +10,14 @@
 *.userosscache
 *.sln.docstates
 /Libs/*
-
+pdb2mdb.exe
 /MMHook/*
 PaddysMods.dll
 Package/Package.zip
+**.dll
+**.mdb
+**.exe
+Package/plugins
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

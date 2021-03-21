@@ -26,36 +26,6 @@ namespace PaddysMods
             On.Player.GetRunSpeedFactor += Player_GetRunSpeedFactor;
         }
 
-        private static bool Humanoid_BlockAttack(On.Humanoid.orig_BlockAttack orig, Humanoid self, HitData hit, Character attacker)
-        {
-            //if(hit.)
-            return orig(self, hit, attacker);
-        }
-
-        private static void Player_RaiseSkill1(On.Player.orig_RaiseSkill orig, Player self, Skills.SkillType skill, float value)
-        {
-            orig(self, skill, value);
-        }
-
-
-        //private static void Humanoid_BlockAttack(ILContext il)
-        //{
-        //    ILCursor c = new ILCursor(il);
-        //    c.GotoNext(
-        //        MoveType.After,
-        //        zz => zz.MatchLdarg(0),
-        //        zz => zz.MatchLdcI4(out _),
-        //        zz => zz.MatchLdloc(1),
-        //        zz => zz.MatchBrtrue(out _),
-        //        zz => zz.MatchLdcR4(out _),//Match 1,
-        //        zz => zz.MatchBr(out _),
-        //        zz => zz.MatchLdcR4(out _) //Match 2
-        //        );
-        //    c.Prev.Operand = 500;
-        //    Main.log.LogDebug($"{c}");
-
-        //}
-
         private static float Player_GetRunSpeedFactor(On.Player.orig_GetRunSpeedFactor orig, Player self)
         {
             if (self.GetCurrentWeapon().m_shared.m_itemType == ItemDrop.ItemData.ItemType.Bow)
