@@ -14,7 +14,7 @@ namespace StackingNotifications
     {
         private static NotificationHandler instance;
         internal static GameObject NotificationLayer;
-        public List<GameObject> notifications = new List<GameObject>();
+        private List<GameObject> notifications = new List<GameObject>();
         private readonly Queue<GameObject> incomingNotificationQueue = new Queue<GameObject>();
         
         private GameObject currentNotification;
@@ -32,9 +32,9 @@ namespace StackingNotifications
             }
         }
         
-        public void Remove(GameObject go)
+        public void Remove(GameObject notification)
         {
-            notifications.Remove(go);
+            notifications.Remove(notification);
         }
 
         public void Awake()
@@ -65,10 +65,12 @@ namespace StackingNotifications
 
         public void Update()
         {
+#if DEBUG
             if (Input.GetKeyDown(KeyCode.Keypad8)) NotificationHandler.Instance.AddNotification("TestNotification");
+#endif
         }
 
-        public IEnumerator ProcessQueue()
+        private IEnumerator ProcessQueue()
         {
             while (true)
             {
