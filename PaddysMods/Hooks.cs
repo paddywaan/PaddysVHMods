@@ -23,7 +23,9 @@ namespace PaddysMods
             if (Config.AutoShout.Value) On.Chat.InputText += Chat_InputText;
             if (Config.TrashFilter.Value) IL.Player.AutoPickup += Player_AutoPickup;
             On.ZSteamSocket.OnNewConnection += ZSteamSocket_OnNewConnection;
+#if DEBUG
             On.Player.GetRunSpeedFactor += Player_GetRunSpeedFactor;
+#endif
         }
 
         private static float Player_GetRunSpeedFactor(On.Player.orig_GetRunSpeedFactor orig, Player self)
@@ -33,7 +35,6 @@ namespace PaddysMods
                 return orig(self) * 1.5f;
             }
             return orig(self);
-            
         }
 
         private static float Humanoid_GetAttackDrawPercentage(On.Humanoid.orig_GetAttackDrawPercentage orig, Humanoid self)
@@ -129,8 +130,6 @@ namespace PaddysMods
             c.Next.Next.OpCode = OpCodes.Ldc_R4;
             c.Next.Next.Operand = Config.WorkbenchRadius.Value;
         }
-
-
 
         private static void InventoryGui_Update(On.InventoryGui.orig_Update orig, InventoryGui self)
         {

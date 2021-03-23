@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-namespace SkillsRework
+namespace StackingNotifications
 {
-    internal class Notification : MonoBehaviour
+    public class Notification : MonoBehaviour
     {
         private const float NotificationTime = 5f;
         private RectTransform rect;
@@ -13,6 +13,7 @@ namespace SkillsRework
         private float timeLeft;
         public Vector3 nextPos;
         RectTransform borderRect;
+        public Rect Size;
         bool flag;
 
 
@@ -21,11 +22,11 @@ namespace SkillsRework
             rect = this.gameObject.GetComponent<RectTransform>();
             borderRect = this.transform.Find("borderOverlay").GetComponent<RectTransform>();
             timeLeft = (timeLeft == 0f) ? NotificationTime : timeLeft;
-
+            Size = rect.rect;
             //Main.log.LogDebug($"{rect}{borderRect}");
             if (!rect || !borderRect) Main.log.LogDebug($"Failed to load assets for Notification: {rect}{borderRect}");
             flag = false;
-            this.gameObject.transform.localPosition = new Vector3(-280, -30, 0); //Starting pos
+            this.gameObject.transform.localPosition = new Vector3(-Size.width, -Size.height, 0); //Starting pos
             //this.gameObject.SetActive(true);
         }
 
@@ -73,7 +74,7 @@ namespace SkillsRework
 
         public bool IsOffScreen()
         {
-            if (rect.localPosition.y <= -borderRect.rect.height || rect.localPosition.y >= 210) return true;
+            if (rect.localPosition.y <= -borderRect.rect.height || rect.localPosition.y >= Size.height*7) return true;
             return false;
         }
 

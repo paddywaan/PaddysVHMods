@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace SkillsRework
+namespace StackingNotifications
 {
-    internal class NotificationHandler : MonoBehaviour
+    public class NotificationHandler : MonoBehaviour
     {
         private static NotificationHandler instance;
-        internal static GameObject NotificationLayer;
+        private static GameObject NotificationLayer;
         public List<GameObject> notifications = new List<GameObject>();
         private readonly Queue<GameObject> incomingNotificationQueue = new Queue<GameObject>();
         
@@ -27,7 +27,7 @@ namespace SkillsRework
         {
             get
             {
-                if (instance == null) instance = new NotificationHandler();
+                if (!instance) instance = new NotificationHandler();
                 return instance;
             }
         }
@@ -47,13 +47,6 @@ namespace SkillsRework
             Main.log.LogDebug($"Start called on NotificationHandler.");
             NotificationLayer = GameObject.Instantiate(ModAssets.Instance.NotificationLayer, this.transform);
             NotificationLayer.SetActive(true);
-            //this
-
-
-            //this.StartCoroutine("ProcessQueue");
-            //AddNotification("test1111", 5f);
-            //AddNotification("test2222", 5f);
-            //AddNotification("test333", 5f);
             StartCoroutine("ProcessQueue");
         }
 
@@ -72,31 +65,32 @@ namespace SkillsRework
 
         public void Update()
         {
+#if DEBUG
             if (Input.GetKeyDown(KeyCode.Keypad8)) NotificationHandler.Instance.AddNotification("TestNotification", 5f);
+#endif
         }
 
         public IEnumerator ProcessQueue()
         {
             while (true)
             {
-                //Main.log.LogDebug($"Tick");
                 if (incomingNotificationQueue.Count > 0)
                 {
-                    //Main.log.LogDebug($"QueueCount: {incomingNotificationQueue.Count}");
-                    //Main.log.LogDebug($"Moving?: {currentNotification?.GetComponent<Notification>().isMoving()}");
                     if (!currentNotification) currentNotification = incomingNotificationQueue.Peek();
                     //Main.log.LogDebug($"Moving?: {currentNotification.GetComponent<Notification>().isMoving()}");
-                    if (!currentNotification.GetComponent<Notification>().IsMoving())
+                    var notComponent = currentNotification.GetComponent<Notification>();
+                    if (!notComponent.IsMoving())
                     {
                         //Main.log.LogDebug($"Not moving.");
                         var incNot = incomingNotificationQueue.Dequeue();
+                        
+                        incNot.gameObject.transform.localPosition = new Vector3(-notComponent.Size.width, -notComponent.Size.height, 0); //Starting pos
                         incNot.SetActive(true);
-                        incNot.gameObject.transform.localPosition = new Vector3(-280, -30, 0); //Starting pos
                         notifications.Add(incNot);
                         //Main.log.LogDebug($"Move all up.");
                         foreach (var n in notifications)
                         {
-                            if (n != null && n.GetComponent<Notification>()) n.GetComponent<Notification>().MoveUp();
+                            if (n!= null && n.GetComponent<Notification>()) n.GetComponent<Notification>().MoveUp();
                         }
                     }
                     //else yield return new WaitForSeconds(1f);

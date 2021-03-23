@@ -1,43 +1,42 @@
 ﻿using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using Steamworks;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+using StackingNotifications;
 
-namespace SkillsRework
+namespace SkillfulProgression
 {
     public static class States
     {
         public static bool PrimaryAttack = false;
         public static bool SecondaryAttack = false;
         public static int ChainCount = 0;
-        public static bool HitDuringAttack = false;
     }
     public static class Hooks
     {
         internal static void Init()
         {
-            On.Menu.Start += Menu_Start;
             IL.Humanoid.BlockAttack += Humanoid_BlockAttack;
             On.Projectile.OnHit += Projectile_OnHit;
             On.Character.RPC_Damage += Character_RPC_Damage;
             On.Attack.DoMeleeAttack += Attack_DoMeleeAttack;
             On.Humanoid.StartAttack += Humanoid_StartAttack;
             On.Attack.Start += Attack_Start;
-            On.FejdStartup.Start += FejdStartup_Start;
+            On.Character.Awake += CharacterOnAwake;
         }
 
-        private static void FejdStartup_Start(On.FejdStartup.orig_Start orig, FejdStartup self)
+        private static void CharacterOnAwake(On.Character.orig_Awake orig, Character self)
         {
             orig(self);
+            self.gameObject.AddComponent<SkillTracker>();
         }
 
         private static bool Attack_Start(On.Attack.orig_Start orig, Attack self, Humanoid character, Rigidbody body, ZSyncAnimation zanim, CharacterAnimEvent animEvent, VisEquipment visEquipment, ItemDrop.ItemData weapon, Attack previousAttack, float timeSinceLastAttack, float attackDrawPercentage)
         {
             var ret = orig(self, character, body, zanim, animEvent, visEquipment, weapon, previousAttack, timeSinceLastAttack, attackDrawPercentage);
             if (IsLocalPlayer(self.m_character)) States.ChainCount = self.m_currentAttackCainLevel;
+            var skillTracker = character.gameObject.GetComponent<SkillTracker>();
+            if (skillTracker) skillTracker.LastAttackStart = Time.time;
             return ret;
         }
 
@@ -65,18 +64,16 @@ namespace SkillsRework
 
         private static void Character_RPC_Damage(On.Character.orig_RPC_Damage orig, Character self, long sender, HitData hit)
         {
-            if (IsLocalPlayer(self) && self.InAttack()) States.HitDuringAttack = true;
-
-
-
-
+            var skillTracker = self.gameObject.GetComponent<SkillTracker>();
+            if (skillTracker) skillTracker.LastHitTaken = Time.time;
+            
             bool alerted = false;
             if(self.m_baseAI) alerted = self.m_baseAI.m_alerted;
             var isBackstab = hit.m_backstabBonus > 1f && Time.time - self.m_backstabTime > 300f;
             orig(self, sender, hit);
-            var attacker = hit.GetAttacker();
+            var attacker = hit.GetAttacker() as Player;
             float XP = 0;
-            if (attacker is Player)
+            if (attacker)
             {
                 //Main.log.LogDebug($"Primary: {States.PrimaryAttack}, Secondary: {States.SecondaryAttack} with {hit.m_skill}. Attackers {(attacker as Player).GetCurrentWeapon()} is a {(attacker as Player).GetCurrentWeapon().m_shared.m_skillType}. alerted?: {alerted}");
                 switch (hit.m_skill)
@@ -100,42 +97,34 @@ namespace SkillsRework
                             attacker.RaiseSkill(hit.m_skill, XP);
                         }
                         break;
-                    default:
+                    case Skills.SkillType.Axes:
+                        var wName = attacker.GetCurrentWeapon().m_shared.m_name;
+                        if (wName.Equals("$item_battleaxe") && States.PrimaryAttack && States.ChainCount == 0)
+                        {
+                            var attackerSkillTracker = attacker.gameObject.GetComponent<SkillTracker>();
+                            if (attackerSkillTracker)
+                            {
+                                var attackerHitDuration = Time.time - attackerSkillTracker.LastAttackStart;
+                                Main.log.LogDebug(
+                                    $"Attack from {hit.GetAttacker().GetHoverName()} took {attackerHitDuration}s");
+                                if (attackerSkillTracker.LastHitTaken <= attackerSkillTracker.LastAttackStart)
+                                {
+                                    if (IsLocalPlayer(hit.GetAttacker()))
+                                    {
+                                        XP = DamageToXP(self, hit);
+                                        NotificationHandler.Instance.AddNotification($"Axes: +{XP:0.00}XP");
+                                        attacker.RaiseSkill(hit.m_skill, XP);
+                                        Main.log.LogDebug(
+                                            $"{hit.GetAttacker().GetHoverName()} hit {self.GetHoverName()} during window with chaincount: {States.ChainCount}");
+                                    }
+                                }
+                            }
+                        }
                         break;
                 }
-                Main.log.LogDebug($"{hit.GetAttacker().GetHoverName()} performed {hit.m_skill} against {self.GetHoverName()} hitting for {hit.GetTotalDamage()} yeilding {XP}.");
+                Main.log.LogDebug($"{hit.GetAttacker().GetHoverName()} performed {hit.m_skill} against {self.GetHoverName()} hitting for {hit.GetTotalDamage()} yielding {XP}.");
             }
         }
-
-        private static void Menu_Start(On.Menu.orig_Start orig, Menu self)
-        {
-            self.gameObject.AddComponent<NotificationHandler>();
-            orig(self);
-        }
-
-        //private static void Menu_Start(On.Menu.orig_Start orig, Menu self)
-        //{
-        //    orig(self);
-        //   // self.gameObject.AddComponent<NotificationHandler>();
-        //    //var go = GameObject.Instantiate(ModAssets.SkillUp, self.m_root.transform);
-        //    //go.transform.SetParent(self.transform);
-        //    //var notify = go.AddComponent<SkillNotify>();
-        //    //notify.Start();
-        //    //notify.gameObject.SetActive(true);
-            
-        //    //go.SetActive(true);
-        //    //Main.log.LogDebug($"{self.m_root.transform}");
-
-
-
-        //    //var testGameObject = new GameObject();
-        //    //var transform = testGameObject.AddComponent<UnityEngine.RectTransform>();
-        //    //var image = testGameObject.AddComponent<UnityEngine.UI.Image>();
-        //    //transform.pivot = new Vector2(0.5f, 0.5f);
-        //    //transform.sizeDelta = new Vector2(1000, 1000);
-        //    //transform.SetParent(self.m_root.transform);
-        //    //Main.log.LogDebug($"{self.m_root.transform}");
-        //}
 
         private static void Projectile_OnHit(On.Projectile.orig_OnHit orig, Projectile self, Collider collider, Vector3 hitPoint, bool water)
         {
@@ -205,13 +194,6 @@ namespace SkillsRework
             });
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="victim"></param>
-        /// <param name="hit"></param>
-        /// <param name="damage">Required to pass this param because the dev's totaldamage function only returns the totalled damagetypes, exclusive of any other modifiers.</param>
-        /// <returns></returns>
         private static float DamageToXP(Character victim, HitData hit, float damageOverride = 0)
         {
             Main.log.LogDebug($"override: {damageOverride} vs dmg: {hit.GetTotalDamage()}");

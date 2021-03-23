@@ -6,43 +6,32 @@ using System.IO;
 using System.Reflection;
 using UnityEngine;
 
-namespace SkillsRework
+namespace SkillfulProgression
 {
+    [BepInDependency("Paddy_StackingNotifications")]
     [BepInPlugin(GUID, MODNAME, VERSION)]
     public class Main : BaseUnityPlugin
     {
         #region[Declarations]
 
         public const string
-            MODNAME = "SkillsRework",
+            MODNAME = "SkillfulProgression",
             AUTHOR = "Paddy",
             GUID = AUTHOR + "_" + MODNAME,
             VERSION = "1.0.0";
 
         public static ManualLogSource log;
-        internal readonly Harmony harmony;
-        internal readonly Assembly assembly;
-        public readonly string modFolder;
 
         #endregion
 
         public Main()
         {
             log = Logger;
-            harmony = new Harmony(GUID);
-            assembly = Assembly.GetExecutingAssembly();
-            modFolder = Path.GetDirectoryName(assembly.Location);
         }
 
         public void Start()
         {
             Hooks.Init();
         }
-
-        public void Update()
-        {
-            //Main.log.LogDebug($"Primary:{States.PrimaryAttack}, Secondary: {States.SecondaryAttack}");
-        }
-
     }
 }
