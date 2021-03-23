@@ -14,7 +14,7 @@ namespace SkillfulProgression
     }
     public static class Hooks
     {
-        private const string highlightColour = "#155c28";
+        private const string highlightColour = "white";
         internal static void Init()
         {
             IL.Humanoid.BlockAttack += Humanoid_BlockAttack;

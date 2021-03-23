@@ -19,6 +19,8 @@ namespace SkillfulProgression
             AUTHOR = "Paddy",
             GUID = AUTHOR + "_" + MODNAME,
             VERSION = "1.0.0";
+        internal readonly Assembly assembly;
+        public readonly string modFolder;
 
         public static ManualLogSource log;
 
@@ -27,6 +29,8 @@ namespace SkillfulProgression
         public Main()
         {
             log = Logger;
+            assembly = Assembly.GetExecutingAssembly();
+            modFolder = Path.GetDirectoryName(assembly.Location);
         }
 
         public void Start()

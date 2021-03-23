@@ -21,7 +21,6 @@ namespace StackingNotifications
         public static ManualLogSource log;
         internal readonly Assembly assembly;
         public readonly string modFolder;
-
         #endregion
 
         public Main()

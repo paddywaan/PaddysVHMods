@@ -19,6 +19,7 @@ Automatically converts localised messages to shouts
 
 
 ## Changelog
+* *v1.0.3* - Implemented custom filter list for auto pickups, configurable via .cfg
 * *v1.0.1* - implemented disabling of certain trash pickups, added toggle for public player position, and added auto-shout
 * *v1.0.0* - Released with workbench radius, cart mass modifier, split stack behaviour.
 

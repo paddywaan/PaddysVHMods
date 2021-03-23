@@ -15,7 +15,6 @@ namespace SkillfulProgression
         static Config()
         {
             genSettings = new ConfigFile(Path.Combine(BepInEx.Paths.ConfigPath, Main.MODNAME + ".cfg"), true);
-            genSettings.Bind("SETTINGS", "NEW SETTING", "", "Does things");
         }
     }
 }
