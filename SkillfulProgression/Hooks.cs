@@ -14,6 +14,7 @@ namespace SkillfulProgression
     }
     public static class Hooks
     {
+        private const string highlightColour = "#155c28";
         internal static void Init()
         {
             IL.Humanoid.BlockAttack += Humanoid_BlockAttack;
@@ -84,7 +85,7 @@ namespace SkillfulProgression
                         {
                             XP = DamageToXP(self, hit);
                             if (self.IsDead()) XP *= 2;
-                            NotificationHandler.Instance.AddNotification($"Knives: +{XP:0.00}XP");
+                            NotificationHandler.Instance.AddNotification($"Knives: <color={highlightColour}>+{XP:0.00}</color>XP");
                             attacker.RaiseSkill(hit.m_skill, XP);
                         }
                         break;
@@ -93,7 +94,7 @@ namespace SkillfulProgression
                         if (States.SecondaryAttack)
                         {
                             XP = DamageToXP(self, hit);
-                            NotificationHandler.Instance.AddNotification($"Clubs: +{XP:0.00}XP");
+                            NotificationHandler.Instance.AddNotification($"Clubs: <color={highlightColour}>+{XP:0.00}</color>XP");
                             attacker.RaiseSkill(hit.m_skill, XP);
                         }
                         break;
@@ -112,7 +113,7 @@ namespace SkillfulProgression
                                     if (IsLocalPlayer(hit.GetAttacker()))
                                     {
                                         XP = DamageToXP(self, hit);
-                                        NotificationHandler.Instance.AddNotification($"Axes: +{XP:0.00}XP");
+                                        NotificationHandler.Instance.AddNotification($"Axes: <color={highlightColour}>+{XP:0.00}</color>XP");
                                         attacker.RaiseSkill(hit.m_skill, XP);
                                         Main.log.LogDebug(
                                             $"{hit.GetAttacker().GetHoverName()} hit {self.GetHoverName()} during window with chaincount: {States.ChainCount}");
@@ -161,8 +162,8 @@ namespace SkillfulProgression
                                 var multi = 1 + (distance / 100);
                                 XP *= multi;
                                 if (hitData.m_skill == Skills.SkillType.Spears) XP *= 3;
-                                NotificationHandler.Instance.AddNotification($"{hitData.m_skill}: +{XP:0.00}");
-                                NotificationHandler.Instance.AddNotification($"Distance: {distance:0.0}m");
+                                NotificationHandler.Instance.AddNotification($"{hitData.m_skill}: <color={highlightColour}>+{XP:0.00}</color>XP");
+                                NotificationHandler.Instance.AddNotification($"Distance: <color={highlightColour}>{distance:0.0}</color>m");
 
                                 Main.log.LogDebug($"{(self.m_owner as Player).GetPlayerName()} hit {c.m_name} at {distance:0.0}m for {hitData.GetTotalDamage():0.00}/{c.GetMaxHealth()} using a {multi:0.00} multiplier yeilding {XP:0.00}XP to {hitData.m_skill}.");
                                 //(self.m_owner as Player).RaiseSkill(Skills.SkillType.Bows, num);
@@ -189,7 +190,7 @@ namespace SkillfulProgression
             {
                 num /= 10; //0.5-10
                 Main.log.LogDebug($"Gave {chara.m_name} {num} XP for Parry: {num}");
-                NotificationHandler.Instance.AddNotification($"Shields: +{num}XP");
+                NotificationHandler.Instance.AddNotification($"Shields: <color={highlightColour}>+{num}</color>XP");
                 chara.RaiseSkill(Skills.SkillType.Blocking, num);
             });
         }

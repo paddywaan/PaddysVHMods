@@ -88,29 +88,7 @@ namespace PaddysMods
             self.m_publicPosition.isOn = Config.PublicPlayerPosition.Value;
             ZNet.instance.SetPublicReferencePosition(self.m_publicPosition.isOn);
         }
-
-        private static bool Humanoid_Pickup(On.Humanoid.orig_Pickup orig, Humanoid self, GameObject go)
-        {
-            if (Config.TrashFilter.Value) return orig(self, go);
-            //Main.log.Log(BepInEx.Logging.LogLevel.Debug, $"{go.name}");
-            ItemDrop component = go.GetComponent<ItemDrop>();
-            if (component == null)
-            {
-                return false;
-            }
-            switch (go.name)
-            {
-                case "GreydwarfEye(Clone)": return false;
-                case "Resin(Clone)": return false;
-                case "GreylingTrophy(Clone)": return false;
-                case "TophyBoar(Clone)": return false;
-                case "TrophyDeer(Clone)": return false;
-                default: /*Main.log.LogDebug($"Pickup Exclusions: {self.m_name} picked up {go.name}");*/
-                    break;
-            }
-            return orig(self, go);
-        }
-
+        
         public static void CircleProjector_CreateSegments(On.CircleProjector.orig_CreateSegments orig, CircleProjector self)
         {
             self.m_radius = Config.WorkbenchRadius.Value;
@@ -146,16 +124,6 @@ namespace PaddysMods
             }
         }
 
-        public static void Chat_GetShoutWorldTexts(On.Chat.orig_GetShoutWorldTexts orig, Chat self, List<Chat.WorldTextInstance> texts)
-        {
-            foreach (Chat.WorldTextInstance worldTextInstance in self.m_worldTexts)
-            {
-                if (worldTextInstance.m_type == Talker.Type.Shout || worldTextInstance.m_type == Talker.Type.Normal)
-                {
-                    texts.Add(worldTextInstance);
-                }
-            }
-        }
         public static void Vagon_UpdateMass(On.Vagon.orig_UpdateMass orig, Vagon self)
         {
             var x = self.m_itemWeightMassFactor;

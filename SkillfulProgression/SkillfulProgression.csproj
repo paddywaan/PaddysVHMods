@@ -72,9 +72,8 @@
       <HintPath>$(GameDir)\BepInEx\core\BepInEx.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="MMHOOK_assembly_valheim">
-      <HintPath>$(GameDir)\BepInEx\plugins\MMHOOK\MMHOOK_assembly_valheim.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="MMHOOK_assembly_valheim, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>D:\Program Files (x86)\Steam\steamapps\common\Valheim\BepInEx\plugins\MMHOOK\MMHOOK_assembly_valheim.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>$(GameDir)\BepInEx\core\Mono.Cecil.dll</HintPath>
@@ -393,6 +392,7 @@
     <Content Include="Package\plugins\SkillsRework\SkillfulProgression.pdb" />
     <Content Include="Package\plugins\SkillsRework\SkillsRework.dll.mdb" />
     <Content Include="Package\README.md" />
+    <None Include="Resources\NotificationLayer.webm" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
