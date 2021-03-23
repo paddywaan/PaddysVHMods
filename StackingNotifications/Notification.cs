@@ -7,26 +7,31 @@ namespace StackingNotifications
 {
     public class Notification : MonoBehaviour
     {
-        private const float NotificationTime = 5f;
+        private const float NotificationTime = 3f;
         private RectTransform rect;
-        public float Duration;
-        private float timeLeft;
+        public float timeLeft;
         public Vector3 nextPos;
         RectTransform borderRect;
-        public Rect Size;
         bool flag;
+        public Vector2 size;
 
-
-        public void Start()
+        public void Awake()
         {
             rect = this.gameObject.GetComponent<RectTransform>();
             borderRect = this.transform.Find("borderOverlay").GetComponent<RectTransform>();
+            size = rect.sizeDelta;
+        }
+
+        public void Start()
+        {
             timeLeft = (timeLeft == 0f) ? NotificationTime : timeLeft;
-            Size = rect.rect;
+
             //Main.log.LogDebug($"{rect}{borderRect}");
             if (!rect || !borderRect) Main.log.LogDebug($"Failed to load assets for Notification: {rect}{borderRect}");
             flag = false;
-            this.gameObject.transform.localPosition = new Vector3(-Size.width, -Size.height, 0); //Starting pos
+            //Main.log.LogDebug($"rect.rect.size.x:{rect.rect.size.x}, rect.sizeDelta.x:{rect.sizeDelta.x}, rect.rect.width:{rect.rect.width}, {Size.x}");
+            //Size = borderRect.rect;
+            this.gameObject.transform.localPosition = new Vector3(-size.x, -size.y, 0); //Starting pos
             //this.gameObject.SetActive(true);
         }
 
@@ -52,7 +57,7 @@ namespace StackingNotifications
                     //}
                     if (cg.alpha <= 0)
                     {
-                        NotificationHandler.Instance.Remove(rect.gameObject);
+                        NotificationHandler.Instance.Remove(this.gameObject);
                         Destroy(this.gameObject);
                     }
                 }
@@ -61,10 +66,11 @@ namespace StackingNotifications
 
         public void MoveUp()
         {
-            //if(!rect || !borderRect) nextPos = new Vector3(rect.localPosition.x, rect.localPosition.y + 30, rect.localPosition.z);
+            //if(!rect || !borderRect) nextPos = new Vector3(rect.localPosition.x, rect.localPosition.y + Size.height, rect.localPosition.z);
             //if (rect.localPosition.y % borderRect.rect.height == 0)
             //{
-            nextPos = new Vector3(this.gameObject.transform.localPosition.x, this.gameObject.transform.localPosition.y + 30, this.gameObject.transform.localPosition.z);
+            var pos = this.gameObject.transform.localPosition;
+            nextPos = new Vector3(pos.x, pos.y + size.y, pos.z);
             //Main.log.LogDebug($"MovedUp from {this.gameObject.transform.localPosition} to {nextPos}");
             //    return true;
             //}
@@ -74,13 +80,13 @@ namespace StackingNotifications
 
         public bool IsOffScreen()
         {
-            if (rect.localPosition.y <= -borderRect.rect.height || rect.localPosition.y >= Size.height*7) return true;
+            if (rect.localPosition.y <= -borderRect.rect.height || rect.localPosition.y >= size.y*7) return true;
             return false;
         }
 
         public bool IsMoving()
         {
-            if (this.timeLeft < 0) return false;
+            if (this.timeLeft <= 0) return false;
             //Main.log.LogDebug($"comparing {this.gameObject.transform.localPosition} to {nextPos}");
             if (this.gameObject.transform.localPosition.Equals(nextPos) || nextPos.Equals(Vector3.zero))
             {
