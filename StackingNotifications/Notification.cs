@@ -14,6 +14,7 @@ namespace StackingNotifications
         RectTransform borderRect;
         bool flag;
         public Vector2 size;
+        public bool PlaySoundEffect = false;
 
         public void Awake()
         {
@@ -32,6 +33,8 @@ namespace StackingNotifications
             //Main.log.LogDebug($"rect.rect.size.x:{rect.rect.size.x}, rect.sizeDelta.x:{rect.sizeDelta.x}, rect.rect.width:{rect.rect.width}, {Size.x}");
             //Size = borderRect.rect;
             this.gameObject.transform.localPosition = new Vector3(-size.x, -size.y, 0); //Starting pos
+            var audioSource = this.transform.Find("Blop").GetComponent<AudioSource>();
+            if(audioSource && PlaySoundEffect) audioSource.Play();
             //this.gameObject.SetActive(true);
         }
 

@@ -50,13 +50,14 @@ namespace StackingNotifications
             StartCoroutine("ProcessQueue");
         }
 
-        public void AddNotification(string text, float duration = 3f)
+        public void AddNotification(string text, float duration = 3f, bool playSoundEffect = false)
         {
             var newNotification = GameObject.Instantiate(ModAssets.Instance.SkillUp, NotificationLayer.transform);
             var notifyComponent = newNotification.AddComponent<Notification>();
 
             newNotification.GetComponentInChildren<Text>().text = text;
             notifyComponent.timeLeft = duration;
+            notifyComponent.PlaySoundEffect = playSoundEffect;
             newNotification.SetActive(false);
             incomingNotificationQueue.Enqueue(newNotification);
             Main.log.LogDebug($"Queued message \"{text}\" for processing.");
